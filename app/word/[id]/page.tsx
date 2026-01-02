@@ -39,14 +39,24 @@ export default async function DetailPage({
         {/* Nội dung chính */}
         <div className="flex-1">
           {/* Breadcrumb / Thông tin header */}
-          <div className="flex items-center gap-2 text-sm text-[#1e40af] font-bold mb-6">
-            <span>Quyển {char.volume}</span>
-            <span>|</span>
-            <span>
-              Bộ {char.radical} ({char.radical}部)
-            </span>
-            <span>|</span>
-            <span className="text-stone-500">{char.pinyin}</span>
+          <div className="flex-col items-center gap-2 text-sm text-[#1e40af] font-bold mb-6">
+            <div className="mb-2">
+              <span>Quyển {char.volume}</span>
+              <span>|</span>
+              <span>
+                Bộ {char.radical} ({char.radical}部)
+              </span>
+              <span>|</span>
+              <span className="text-stone-500">{char.pinyin} (pinyin)</span>
+            </div>
+            <div>
+              <span className="font-bold text-stone-500 text-sm uppercase mr-2">
+                Phiên thiết:
+              </span>
+              <span className="font-serif text-sm text-stone-900">
+                ... Nội dung đang được biên soạn
+              </span>
+            </div>
           </div>
 
           {/* Phần hiển thị chữ lớn */}
@@ -61,9 +71,25 @@ export default async function DetailPage({
                   ({char.hanviet})
                 </span>
               </h1>
-              <p className="text-xl font-serif text-stone-800 leading-relaxed">
+              <p className="text-xl font-serif text-stone-800 leading-relaxed ">
                 {char.explanation}
               </p>
+              <div className="">
+                <span className="font-bold text-stone-500 text-sm uppercase mr-2">
+                  Phiên Âm Hán Việt:
+                </span>
+                <span className="font-serif text-sm text-stone-900">
+                  ... Nội dung đang được biên soạn
+                </span>
+              </div>
+              <div className="mb-6 pb-4">
+                <span className="font-bold text-stone-500 text-sm uppercase mr-2">
+                  Dịch nghĩa:
+                </span>
+                <span className="font-serif text-sm text-stone-900">
+                  ... Nội dung đang được biên soạn
+                </span>
+              </div>
             </div>
           </div>
 
@@ -118,6 +144,41 @@ export default async function DetailPage({
                 ) : (
                   <p className="italic text-stone-400 text-sm">
                     Chưa có dữ liệu chú giải.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 border-t border-stone-200 pt-8">
+            {/* Khối 1: Phiên Âm Hán Việt */}
+            <div className="bg-stone-50 p-5 rounded border border-stone-200">
+              <h3 className="text-sm font-bold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-800 rounded-full"></span>
+                Âm Hán Việt
+              </h3>
+              <p className="font-serif text-2xl text-stone-900 font-bold">
+                {char.hanviet || (
+                  <span className="text-stone-400 text-lg italic font-normal">
+                    Đang cập nhật...
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {/* Khối 2: Dịch Nghĩa Tiếng Việt */}
+            <div className="bg-stone-50 p-5 rounded border border-stone-200">
+              <h3 className="text-sm font-bold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                Dịch Nghĩa (Vietnamese)
+              </h3>
+              <div className="font-serif text-lg text-stone-800 leading-relaxed">
+                {/* Nếu có dữ liệu thì hiện, không thì hiện text mờ */}
+                {char.meaning_vi ? (
+                  <p>{char.meaning_vi}</p>
+                ) : (
+                  <p className="text-stone-400 italic text-base">
+                    Nội dung đang được biên soạn...
                   </p>
                 )}
               </div>
