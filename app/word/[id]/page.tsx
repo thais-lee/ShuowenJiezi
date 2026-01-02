@@ -1,9 +1,10 @@
 import { supabase } from '@/lib/supabase';
-import { Character } from '@/types';
+import { Character } from '@/types'; // Import interface từ file types bạn vừa sửa
 import SearchSidebar from '@/components/SearchSidebar';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-// Hàm lấy dữ liệu từ Server (không cần useEffect)
+// Hàm lấy dữ liệu từ Supabase
 async function getCharacter(id: string) {
   const { data, error } = await supabase
     .from('characters')
@@ -11,173 +12,183 @@ async function getCharacter(id: string) {
     .eq('id', id)
     .single();
 
-  if (error) return null;
+  if (error || !data) return null;
   return data as Character;
 }
 
+// Next.js 15 yêu cầu params là Promise, ta await nó để an toàn cho cả bản cũ và mới
 export default async function DetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  // Await params trước khi sử dụng (Yêu cầu của Next.js bản mới nhất)
-  const { id } = await params;
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
   const char = await getCharacter(id);
 
+  // Nếu không tìm thấy chữ, trả về trang 404 hoặc giao diện báo lỗi
   if (!char) {
-    return <div className="p-10 text-center">Không tìm thấy chữ này.</div>;
+    return (
+      <div className="min-h-screen bg-[#faf9f6] p-10 flex justify-center items-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-stone-300 mb-4">404</h1>
+          <p className="text-stone-600">Không tìm thấy dữ liệu cho ID: {id}</p>
+          <Link href="/" className="text-blue-600 hover:underline mt-4 block">
+            ← Quay lại trang chủ
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
     <main className="min-h-screen bg-white p-6 md:p-10 font-sans text-stone-800">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10">
-        {/* Sidebar vẫn giữ nguyên để tiện tra cứu tiếp */}
+        {/* Sidebar: Để người dùng tiện tra cứu tiếp */}
         <div className="hidden md:block">
           <SearchSidebar />
         </div>
 
-        {/* Nội dung chính */}
+        {/* --- NỘI DUNG CHÍNH --- */}
         <div className="flex-1">
-          {/* Breadcrumb / Thông tin header */}
-          <div className="flex-col items-center gap-2 text-sm text-[#1e40af] font-bold mb-6">
-            <div className="mb-2">
-              <span>Quyển {char.volume}</span>
-              <span>|</span>
-              <span>
-                Bộ {char.radical} ({char.radical}部)
-              </span>
-              <span>|</span>
-              <span className="text-stone-500">{char.pinyin} (pinyin)</span>
-            </div>
-            <div>
-              <span className="font-bold text-stone-500 text-sm uppercase mr-2">
-                Phiên thiết:
-              </span>
-              <span className="font-serif text-sm text-stone-900">
-                ... Nội dung đang được biên soạn
-              </span>
-            </div>
+          {/* 1. Header: Thông tin định danh (Quyển, Bộ, Pinyin, Phiên thiết) */}
+          <div className="flex flex-wrap items-center gap-3 text-sm font-bold mb-6 border-b border-stone-200 pb-4">
+            <span className="text-[#1e40af]">Quyển {char.volume}</span>
+            <span className="text-stone-300">|</span>
+
+            <span className="text-[#1e40af]">Bộ {char.radical}</span>
+            <span className="text-stone-300">|</span>
+
+            <span className="text-stone-600 font-sans text-base">
+              {char.pinyin}
+            </span>
+
+            {/* Hiển thị Phiên thiết nếu có */}
+            {char.fanqie && (
+              <>
+                <span className="text-stone-300">|</span>
+                <span className="text-stone-800 font-serif bg-stone-100 px-2 py-0.5 rounded border border-stone-200">
+                  {char.fanqie}
+                </span>
+              </>
+            )}
           </div>
 
-          {/* Phần hiển thị chữ lớn */}
-          <div className="flex gap-8 items-start border-b border-stone-200 pb-8 mb-8">
-            <div className="w-32 h-32 flex items-center justify-center border border-stone-200 bg-stone-50 text-8xl font-serif text-black shadow-inner">
+          {/* 2. Phần hiển thị Chữ Hán lớn & Giải thích gốc */}
+          <div className="flex gap-8 items-start mb-10">
+            {/* Ô chữ lớn */}
+            <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center border border-stone-300 bg-[#faf9f6] text-8xl font-serif text-black shadow-inner rounded">
               {char.wordhead}
             </div>
+
+            {/* Giải thích của Hứa Thận */}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-4 font-serif">
-                {char.wordhead}{' '}
-                <span className="text-lg font-normal text-stone-500">
-                  ({char.hanviet})
-                </span>
+              <h1 className="text-3xl font-bold mb-3 font-serif flex items-baseline gap-3">
+                {char.wordhead}
+                {char.hanviet && (
+                  <span className="text-lg font-normal text-stone-500 font-sans">
+                    ({char.hanviet})
+                  </span>
+                )}
               </h1>
-              <p className="text-xl font-serif text-stone-800 leading-relaxed ">
+              <div className="text-xl font-serif text-stone-900 leading-relaxed pl-4 border-l-4 border-stone-800">
                 {char.explanation}
-              </p>
-              <div className="">
-                <span className="font-bold text-stone-500 text-sm uppercase mr-2">
-                  Phiên Âm Hán Việt:
-                </span>
-                <span className="font-serif text-sm text-stone-900">
-                  ... Nội dung đang được biên soạn
-                </span>
-              </div>
-              <div className="mb-6 pb-4">
-                <span className="font-bold text-stone-500 text-sm uppercase mr-2">
-                  Dịch nghĩa:
-                </span>
-                <span className="font-serif text-sm text-stone-900">
-                  ... Nội dung đang được biên soạn
-                </span>
               </div>
             </div>
           </div>
 
-          {/* Phần chú thích: Mô phỏng lại giao diện "Đoàn Ngọc Tài Chú" */}
+          {/* 3. Phần Dị thể / Cổ văn (Variants) - Nếu có */}
+          {char.variants && char.variants.length > 0 && (
+            <div className="mb-10 p-5 bg-stone-50 rounded border border-stone-200 dashed">
+              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">
+                Cổ văn / Dị thể
+              </h3>
+              <div className="flex flex-wrap gap-4">
+                {char.variants.map((v, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-3 bg-white px-4 py-2 rounded shadow-sm border border-stone-100"
+                  >
+                    {/* Hiển thị chữ dị thể */}
+                    <span className="text-3xl font-serif text-stone-800">
+                      {v.wordhead}
+                    </span>
+
+                    {/* Giải thích nhỏ */}
+                    <div className="flex flex-col border-l pl-3 border-stone-200">
+                      <span className="text-sm text-stone-600 font-serif">
+                        {v.explanation}
+                      </span>
+                      {/* Nếu có triện thư (ảnh hoặc ký tự đặc biệt) thì hiện ở đây */}
+                      {v.seal_character && (
+                        <span className="text-xs text-stone-400">
+                          Triện: {v.seal_character}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 4. Phần Đoàn Ngọc Tài Chú (Quan trọng nhất) */}
           <div className="space-y-6">
-            <h3 className="text-lg font-bold text-stone-700 border-b border-stone-300 pb-2">
-              Triều Thanh · Đoàn Ngọc Tài《Thuyết văn giải tự chú giải》
+            <h3 className="text-lg font-bold text-stone-800 border-b-2 border-stone-800 inline-block pb-1">
+              Thanh đại · Đoàn Ngọc Tài《Thuyết văn giải tự chú》
             </h3>
 
-            <div className="bg-[#faf9f6] p-6 rounded border border-stone-200 shadow-sm">
-              {/* Hiển thị nghĩa gốc */}
-              <div className="mb-6 pb-4 border-b border-stone-200 border-dashed">
-                <span className="font-bold text-stone-500 text-sm uppercase mr-2">
-                  Nguyên văn:
-                </span>
-                <span className="font-serif text-xl text-stone-900">
-                  {char.explanation}
-                </span>
-              </div>
-
-              {/* Hiển thị mảng ghi chú (JSON Objects) */}
-              <div className="text-stone-800 space-y-4 font-serif text-lg leading-relaxed">
-                {char.duan_notes &&
-                Array.isArray(char.duan_notes) &&
-                char.duan_notes.length > 0 ? (
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  char.duan_notes.map((item: any, index: number) => {
-                    // Kiểm tra an toàn: Nếu item là string (data cũ) thì render thẳng
-                    if (typeof item === 'string') {
-                      return (
-                        <p key={index} className="text-justify">
-                          {item}
-                        </p>
-                      );
-                    }
-
-                    // Nếu item là Object {note, explanation} (Data mới gây lỗi)
-                    return (
-                      <div key={index} className="text-justify mb-3">
-                        {/* Hiển thị phần note */}
-                        {item.note && <span>{item.explanation}</span>}
-
-                        {/* Hiển thị phần explanation (nếu có) - ví dụ in nghiêng hoặc màu khác */}
-                        {item.explanation && (
-                          <span className="block text-stone-500 text-base italic mt-1 ml-4">
-                            ↳ {item.note}
-                          </span>
-                        )}
+            <div className="bg-[#faf9f6] p-6 rounded border border-stone-200">
+              <div className="text-stone-800 space-y-6 font-serif text-lg leading-relaxed">
+                {char.duan_notes && char.duan_notes.length > 0 ? (
+                  char.duan_notes.map((item, index) => (
+                    <div key={index} className="group">
+                      {/* Phần Explanation (Giải thích lại nghĩa gốc) - In đậm */}
+                      <div className="font-bold text-stone-900 mb-2">
+                        {item.explanation}
                       </div>
-                    );
-                  })
+
+                      {/* Phần Note (Lời chú giải chi tiết) - Thụt đầu dòng, màu nhạt hơn */}
+                      <div className="text-stone-700 pl-4 border-l-2 border-stone-300 text-justify text-base">
+                        {item.note}
+                      </div>
+                    </div>
+                  ))
                 ) : (
                   <p className="italic text-stone-400 text-sm">
-                    Chưa có dữ liệu chú giải.
+                    Chưa có dữ liệu chú giải chi tiết.
                   </p>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 border-t border-stone-200 pt-8">
-            {/* Khối 1: Phiên Âm Hán Việt */}
+          {/* 5. Phần thông tin Tiếng Việt (Footer) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 pt-8 border-t border-stone-200">
+            {/* Âm Hán Việt */}
             <div className="bg-stone-50 p-5 rounded border border-stone-200">
-              <h3 className="text-sm font-bold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 bg-blue-800 rounded-full"></span>
+              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">
                 Âm Hán Việt
               </h3>
-              <p className="font-serif text-2xl text-stone-900 font-bold">
+              <p className="font-serif text-2xl text-[#1e40af] font-bold">
                 {char.hanviet || (
-                  <span className="text-stone-400 text-lg italic font-normal">
+                  <span className="text-stone-300 font-normal italic text-base">
                     Đang cập nhật...
                   </span>
                 )}
               </p>
             </div>
 
-            {/* Khối 2: Dịch Nghĩa Tiếng Việt */}
+            {/* Dịch nghĩa */}
             <div className="bg-stone-50 p-5 rounded border border-stone-200">
-              <h3 className="text-sm font-bold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                Dịch Nghĩa (Vietnamese)
+              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">
+                Dịch Nghĩa Tiếng Việt
               </h3>
-              <div className="font-serif text-lg text-stone-800 leading-relaxed">
-                {/* Nếu có dữ liệu thì hiện, không thì hiện text mờ */}
+              <div className="font-serif text-stone-800 leading-relaxed">
                 {char.meaning_vi ? (
                   <p>{char.meaning_vi}</p>
                 ) : (
-                  <p className="text-stone-400 italic text-base">
+                  <p className="text-stone-400 italic text-sm">
                     Nội dung đang được biên soạn...
                   </p>
                 )}
@@ -185,10 +196,13 @@ export default async function DetailPage({
             </div>
           </div>
 
-          {/* Nút điều hướng (Optional) */}
-          <div className="mt-10 flex justify-between">
-            <Link href="/" className="text-blue-600 hover:underline">
-              ← Quay lại trang chủ
+          {/* Nút quay lại */}
+          <div className="mt-12 mb-20">
+            <Link
+              href="/"
+              className="inline-flex items-center text-stone-500 hover:text-stone-900 transition-colors"
+            >
+              <span className="mr-2">←</span> Quay lại trang tìm kiếm
             </Link>
           </div>
         </div>
