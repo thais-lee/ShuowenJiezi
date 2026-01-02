@@ -1,65 +1,92 @@
-import Image from "next/image";
+'use client'
+
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
+import { Character } from '@/types'
+import SearchSidebar from '@/components/SearchSidebar'
+
+function SearchResults() {
+  const searchParams = useSearchParams()
+  const [results, setResults] = useState<Character[]>([])
+  const [loading, setLoading] = useState(false)
+
+  // Lấy params từ URL
+  const w = searchParams.get('w')
+  const p = searchParams.get('p')
+  const r = searchParams.get('r')
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      setLoading(true)
+      let query = supabase.from('characters').select('id, wordhead, pinyin, radical, explanation, hanviet').limit(20)
+
+      // Logic lọc dữ liệu
+      if (w) query = query.ilike('wordhead', `%${w}%`)
+      if (p) query = query.ilike('pinyin', `%${p}%`)
+      if (r) query = query.eq('radical', r) // Bộ thủ thường tìm chính xác
+
+      // Nếu không có gì thì lấy ngẫu nhiên hoặc mặc định (tùy bạn)
+      if (!w && !p && !r) {
+         // Mặc định lấy 10 chữ đầu tiên
+      }
+
+      const { data, error } = await query
+      if (!error && data) setResults(data as Character[])
+      setLoading(false)
+    }
+
+    fetchResults()
+  }, [w, p, r]) // Chạy lại khi URL params thay đổi
+
+  return (
+    <div className="flex-1">
+       {/* Tiêu đề bảng */}
+       <div className="grid grid-cols-12 gap-4 border-b border-stone-300 pb-2 mb-4 font-bold text-stone-700 text-sm uppercase tracking-wide">
+          <div className="col-span-1">Hán tự</div>
+          <div className="col-span-1">Bộ</div>
+          <div className="col-span-2">Pinyin</div>
+          <div className="col-span-8">Thuyết Văn Nguyên Văn</div>
+       </div>
+
+       {/* Danh sách kết quả */}
+       {loading ? (
+         <div className="text-stone-500">Đang tải dữ liệu...</div>
+       ) : (
+         <div className="space-y-2">
+           {results.map((char) => (
+             <div key={char.id} className="group hover:bg-stone-100 transition-colors rounded p-2 -mx-2">
+                <Link href={`/word/${char.id}`} className="grid grid-cols-12 gap-4 items-center">
+                  <div className="col-span-1 text-2xl font-serif text-[#1e40af] font-bold">
+                    {char.wordhead}
+                  </div>
+                  <div className="col-span-1 text-stone-500">{char.radical}</div>
+                  <div className="col-span-2 text-stone-600 font-medium">{char.pinyin}</div>
+                  <div className="col-span-8 text-stone-600 text-sm truncate font-serif">
+                    {char.explanation}
+                  </div>
+                </Link>
+             </div>
+           ))}
+           {results.length === 0 && !loading && (
+             <p className="text-stone-500 italic">Chưa có từ khóa tìm kiếm hoặc không tìm thấy kết quả.</p>
+           )}
+         </div>
+       )}
+    </div>
+  )
+}
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    <main className="min-h-screen bg-white p-6 md:p-10 font-sans text-stone-800">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10">
+        <SearchSidebar />
+        <Suspense fallback={<div>Loading...</div>}>
+          <SearchResults />
+        </Suspense>
+      </div>
+    </main>
+  )
 }
