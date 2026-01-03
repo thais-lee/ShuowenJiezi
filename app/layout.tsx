@@ -38,35 +38,6 @@ const mingliu = localFont({
   display: 'swap',
 });
 
-const hanamin = localFont({
-  src: [
-    {
-      path: './fonts/HNA.otf', // Đường dẫn tính từ file layout.tsx
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: './fonts/HNB.otf', // Đường dẫn tính từ file layout.tsx
-      weight: '400',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-hanamin',
-  display: 'swap',
-});
-
-const nomnaTong = localFont({
-  src: [
-    {
-      path: './fonts/NomNaTongLight.ttf', // Đường dẫn tính từ file layout.tsx
-      weight: '400',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-nomnaTong', // Tên biến để dùng trong Tailwind
-  display: 'swap',
-});
-
 // 2. Cấu hình Font cho chữ Triện (Cổ văn)
 const sealFont = localFont({
   src: [
@@ -108,7 +79,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${mingliu.variable} ${hanNom.variable} ${nomnaTong.variable} ${sealFont.variable} ${hanamin.variable}  ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={` ${mingliu.variable} ${hanNom.variable} ${sealFont.variable}  ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>

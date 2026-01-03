@@ -2,7 +2,6 @@ import { supabase } from '@/lib/supabase';
 import { Character } from '@/types'; // Import interface từ file types bạn vừa sửa
 import SearchSidebar from '@/components/SearchSidebar';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
 // Hàm lấy dữ liệu từ Supabase
 async function getCharacter(id: string) {
