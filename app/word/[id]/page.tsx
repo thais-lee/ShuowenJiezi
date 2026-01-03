@@ -67,7 +67,7 @@ export default async function DetailPage({
             {char.fanqie && (
               <>
                 <span className="text-stone-300">|</span>
-                <span className="text-stone-800 font-serif bg-stone-100 px-2 py-0.5 rounded border border-stone-200">
+                <span className="text-stone-800 font-mingliu bg-stone-100 px-2 py-0.5 rounded border border-stone-200">
                   {char.fanqie}
                 </span>
               </>
@@ -77,13 +77,13 @@ export default async function DetailPage({
           {/* 2. Phần hiển thị Chữ Hán lớn & Giải thích gốc */}
           <div className="flex gap-8 items-start mb-10">
             {/* Ô chữ lớn */}
-            <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center border border-stone-300 bg-[#faf9f6] text-8xl font-serif text-black shadow-inner rounded">
+            <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center border border-stone-300 bg-[#faf9f6] text-8xl font-mingliu text-black shadow-inner rounded">
               {char.wordhead}
             </div>
 
             {/* Giải thích của Hứa Thận */}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-3 font-serif flex items-baseline gap-3">
+              <h1 className="text-3xl font-bold mb-3 font-mingliu flex items-baseline gap-3">
                 {char.wordhead}
                 {char.hanviet && (
                   <span className="text-lg font-normal text-stone-500 font-sans">
@@ -91,7 +91,7 @@ export default async function DetailPage({
                   </span>
                 )}
               </h1>
-              <div className="text-xl font-serif text-stone-900 leading-relaxed pl-4 border-l-4 border-stone-800">
+              <div className="font-mingliu text-xl text-stone-900 leading-relaxed pl-4 border-l-4 border-stone-800">
                 {char.explanation}
               </div>
             </div>
@@ -110,19 +110,22 @@ export default async function DetailPage({
                     className="flex items-center gap-3 bg-white px-4 py-2 rounded shadow-sm border border-stone-100"
                   >
                     {/* Hiển thị chữ dị thể */}
-                    <span className="text-3xl font-serif text-stone-800">
+                    <span className="text-3xl font-mingliu text-stone-800">
                       {v.wordhead}
                     </span>
 
                     {/* Giải thích nhỏ */}
                     <div className="flex flex-col border-l pl-3 border-stone-200">
-                      <span className="text-sm text-stone-600 font-serif">
+                      <span className="text-sm text-stone-600 font-mingliu">
                         {v.explanation}
                       </span>
                       {/* Nếu có triện thư (ảnh hoặc ký tự đặc biệt) thì hiện ở đây */}
                       {v.seal_character && (
                         <span className="text-xs text-stone-400">
-                          Triện: {v.seal_character}
+                          Triện:{' '}
+                          <span className="font-seal text-lg align-middle">
+                            {v.seal_character}
+                          </span>
                         </span>
                       )}
                     </div>
@@ -139,17 +142,17 @@ export default async function DetailPage({
             </h3>
 
             <div className="bg-[#faf9f6] p-6 rounded border border-stone-200">
-              <div className="text-stone-800 space-y-6 font-serif text-lg leading-relaxed">
+              <div className="text-stone-800 space-y-6 font-mingliu text-lg leading-relaxed">
                 {char.duan_notes && char.duan_notes.length > 0 ? (
                   char.duan_notes.map((item, index) => (
                     <div key={index} className="group">
                       {/* Phần Explanation (Giải thích lại nghĩa gốc) - In đậm */}
-                      <div className="font-bold text-stone-900 mb-2">
+                      <div className="font-semibold text-2xl text-stone-900 mb-2 font-mingliu">
                         {item.explanation}
                       </div>
 
                       {/* Phần Note (Lời chú giải chi tiết) - Thụt đầu dòng, màu nhạt hơn */}
-                      <div className="text-stone-700 pl-4 border-l-2 border-stone-300 text-justify text-base">
+                      <div className="text-stone-700 pl-4 border-l-2 border-stone-300 text-justify text-base font-mingliu">
                         {item.note}
                       </div>
                     </div>
@@ -170,7 +173,7 @@ export default async function DetailPage({
               <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">
                 Âm Hán Việt
               </h3>
-              <p className="font-serif text-2xl text-[#1e40af] font-bold">
+              <p className="font-mingliu text-2xl text-[#1e40af] font-bold">
                 {char.hanviet || (
                   <span className="text-stone-300 font-normal italic text-base">
                     Đang cập nhật...
@@ -184,7 +187,7 @@ export default async function DetailPage({
               <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">
                 Dịch Nghĩa Tiếng Việt
               </h3>
-              <div className="font-serif text-stone-800 leading-relaxed">
+              <div className="font-mingliu text-stone-800 leading-relaxed">
                 {char.meaning_vi ? (
                   <p>{char.meaning_vi}</p>
                 ) : (

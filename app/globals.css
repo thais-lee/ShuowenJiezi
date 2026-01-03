@@ -8,6 +8,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-mingliu: var(--font-mingliu);
+  --font-hanNom: var(--font-hanNom), "MingLiU", "PMingLiU", "SimSun", serif;
+  --font-nomnaTong: var(--font-nomnaTong)
+  --font-serif: var(--font-hanNom), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-seal: var(--font-seal), serif;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
