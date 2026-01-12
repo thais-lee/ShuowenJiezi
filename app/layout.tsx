@@ -4,17 +4,11 @@ import localFont from 'next/font/local';
 import './globals.css';
 
 // 1. Cấu hình Font cho văn bản chính (bao gồm cả chữ hiếm)
-const hanNom = localFont({
-  src: [
-    {
-      path: './fonts/HNB.otf', // Đường dẫn tính từ file layout.tsx
-      weight: '400',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-hanNom', // Tên biến để dùng trong Tailwind
-  display: 'swap',
-});
+// const hanNom = localFont({
+//   src: [],
+//   variable: '--font-hanNom', // Tên biến để dùng trong Tailwind
+//   display: 'swap',
+// });
 
 const mingliu = localFont({
   src: [
@@ -42,15 +36,15 @@ const mingliu = localFont({
 const sealFont = localFont({
   src: [
     {
-      path: './fonts/ebas927.ttf', // Thay bằng tên file font triện bạn tải
-      weight: '400',
-      style: 'normal',
-    },
-    {
       path: './fonts/seal.ttf', // Thay bằng tên file font triện bạn tải
       weight: '400',
       style: 'normal',
     },
+    // {
+    //   path: './fonts/seal.ttf', // Thay bằng tên file font triện bạn tải
+    //   weight: '400',
+    //   style: 'normal',
+    // },
   ],
   variable: '--font-seal',
   display: 'swap',
@@ -79,7 +73,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${mingliu.variable} ${hanNom.variable} ${sealFont.variable}  ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={` ${mingliu.variable} ${sealFont.variable}  ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>

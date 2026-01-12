@@ -109,20 +109,20 @@ export default async function DetailPage({
                     className="flex items-center gap-3 bg-white px-4 py-2 rounded shadow-sm border border-stone-100"
                   >
                     {/* Hiển thị chữ dị thể */}
-                    <span className="text-3xl font-mingliu text-stone-800">
+                    <span className="text-6xl font-mingliu text-stone-800">
                       {v.wordhead}
                     </span>
 
                     {/* Giải thích nhỏ */}
                     <div className="flex flex-col border-l pl-3 border-stone-200">
-                      <span className="text-sm text-stone-600 font-mingliu">
+                      <span className="text-xl text-stone-600 font-mingliu">
                         {v.explanation}
                       </span>
                       {/* Nếu có triện thư (ảnh hoặc ký tự đặc biệt) thì hiện ở đây */}
                       {v.seal_character && (
-                        <span className="text-xs text-stone-400">
+                        <span className="text-xl text-stone-400">
                           Triện:{' '}
-                          <span className="font-seal text-lg align-middle">
+                          <span className="font-seal text-8xl align-middle">
                             {v.seal_character}
                           </span>
                         </span>
