@@ -40,11 +40,6 @@ const sealFont = localFont({
       weight: '400',
       style: 'normal',
     },
-    // {
-    //   path: './fonts/seal.ttf', // Thay bằng tên file font triện bạn tải
-    //   weight: '400',
-    //   style: 'normal',
-    // },
   ],
   variable: '--font-seal',
   display: 'swap',

@@ -19,6 +19,9 @@ export interface Character {
   radical: string | null;  // Bộ thủ
   volume: string | null;   // Quyển
   explanation: string | null; // Giải thích gốc (Hứa Thận)
+  seal_character: string | null; // Ký tự triện thư gốc
+  image_url: string | null;      // URL ảnh chữ Hán
+  seal_images: string[] | null;   // Mảng URL ảnh triện thư
   
   // Các cột thông tin tiếng Việt
   hanviet: string | null;     // Âm Hán Việt

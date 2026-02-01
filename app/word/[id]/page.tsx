@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { Character } from '@/types'; // Import interface từ file types bạn vừa sửa
 import SearchSidebar from '@/components/SearchSidebar';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // Hàm lấy dữ liệu từ Supabase
 async function getCharacter(id: string) {
@@ -74,10 +75,46 @@ export default async function DetailPage({
           </div>
 
           {/* 2. Phần hiển thị Chữ Hán lớn & Giải thích gốc */}
-          <div className="flex gap-8 items-start mb-10">
-            {/* Ô chữ lớn */}
-            <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center border border-stone-300 bg-[#faf9f6] text-8xl font-mingliu text-black shadow-inner rounded">
-              {char.wordhead}
+          <div className="flex-col gap-8 items-start mb-10 border-b border-stone-200 pb-10 md:pb-12">
+            {/* 2. Phần hiển thị Chữ Hán & Ảnh đối sánh */}
+            <div className="flex gap-10 items-start pb-10">
+              {/* --- CỘT 1: KHẢI THƯ (CHỮ HIỆN NAY) --- */}
+              <div className="flex flex-col items-center gap-3">
+                {/* Ô chứa chữ */}
+                <div className="w-40 h-40 flex-shrink-0 flex items-center justify-center border-2 border-stone-300 bg-white text-9xl font-serif text-black shadow-sm rounded-lg">
+                  {char.wordhead}
+                </div>
+                {/* Nhãn to bên dưới */}
+                <span className="text-lg font-bold text-stone-600">
+                  Khải Thư
+                </span>
+              </div>
+              {/* --- CỘT 2: TIỂU TRIỆN (CRAWL ĐƯỢC) --- */}
+              <div className="flex flex-col items-center gap-3">
+                {/* Ô chứa ảnh */}
+                <div className="w-40 h-40 flex-shrink-0 border-2 border-stone-300 bg-[#faf9f6] shadow-sm rounded-lg relative overflow-hidden group">
+                  {char.image_url ? (
+                    <Image
+                      src={char.image_url}
+                      alt={`Tiểu triện của ${char.wordhead}`}
+                      fill
+                      className="object-contain p-4 opacity-90 group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  ) : (
+                    /* Fallback khi không có ảnh */
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-7xl font-seal text-stone-300">
+                        {char.wordhead}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {/* Nhãn to bên dưới */}
+                <span className="text-lg font-bold text-stone-600">
+                  Tiểu Triện
+                </span>
+              </div>
             </div>
 
             {/* Giải thích của Hứa Thận */}
@@ -118,7 +155,7 @@ export default async function DetailPage({
                       <span className="text-xl text-stone-600 font-mingliu">
                         {v.explanation}
                       </span>
-                      {/* Nếu có triện thư (ảnh hoặc ký tự đặc biệt) thì hiện ở đây */}
+                      {/* Nếu có triện thư (ảnh hoặc ký tự đặc biệt) thì hiện ở đây
                       {v.seal_character && (
                         <span className="text-xl text-stone-400">
                           Triện:{' '}
@@ -126,7 +163,7 @@ export default async function DetailPage({
                             {v.seal_character}
                           </span>
                         </span>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 ))}
