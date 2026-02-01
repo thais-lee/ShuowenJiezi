@@ -174,7 +174,7 @@ export default async function DetailPage({
           {/* 4. Phần Đoàn Ngọc Tài Chú (Quan trọng nhất) */}
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-stone-800 border-b-2 border-stone-800 inline-block pb-1">
-              Thanh đại · Đoàn Ngọc Tài《Thuyết văn giải tự chú》
+              Thuyết văn giải tự chú của Đoàn Ngọc Tài - đời Thanh
             </h3>
 
             <div className="bg-[#faf9f6] p-6 rounded border border-stone-200">
