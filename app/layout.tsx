@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, LXGW_WenKai_TC, Chocolate_Classical_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 
@@ -55,6 +55,13 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const chocolate = Chocolate_Classical_Sans({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-chocolate',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'Thuyết Văn Giải Tự',
   description: 'Thuyết Văn Giải Tự',
@@ -68,7 +75,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={` ${mingliu.variable} ${sealFont.variable}  ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${chocolate.variable} ${mingliu.variable} ${sealFont.variable}  ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>
