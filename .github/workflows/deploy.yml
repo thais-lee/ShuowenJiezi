@@ -31,7 +31,7 @@ jobs:
           # Thư mục chứa code standalone sau khi build
           local-dir: ./.next/standalone/
           # Thư mục đích trên Azdigi (phải khớp với Application Root trong Node.js App)
-          server-dir: home/phap_duye/tv.hanhoc.com/
+          server-dir: ./
           # Chế độ Passive là bắt buộc cho hầu hết các Hosting
           protocol: ftp
 
@@ -44,7 +44,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           local-dir: ./.next/static/
-          server-dir: home/phap_duye/tv.hanhoc.com/.next/static/
+          server-dir: ./.next/static/
 
       # Đẩy thư mục public (Ảnh)
       - name: Deploy Public
@@ -55,4 +55,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           local-dir: ./public/
-          server-dir: home/phap_duye/tv.hanhoc.com/public/
+          server-dir: ./public/
