@@ -1,20 +1,8 @@
-import { supabase } from '@/lib/supabase';
 import { Character } from '@/types'; // Import interface từ file types bạn vừa sửa
 import SearchSidebar from '@/components/SearchSidebar';
 import Link from 'next/link';
 import Image from 'next/image';
-
-// Hàm lấy dữ liệu từ Supabase
-async function getCharacter(id: string) {
-  const { data, error } = await supabase
-    .from('characters')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error || !data) return null;
-  return data as Character;
-}
+import { localDb } from '@/lib/db';
 
 // Next.js 15 yêu cầu params là Promise, ta await nó để an toàn cho cả bản cũ và mới
 export default async function DetailPage({
@@ -24,7 +12,7 @@ export default async function DetailPage({
 }) {
   const resolvedParams = await params;
   const id = resolvedParams.id;
-  const char = await getCharacter(id);
+  const char = localDb.getById(id) as Character | null; // Sử dụng localDb để lấy dữ liệu theo ID
 
   // Nếu không tìm thấy chữ, trả về trang 404 hoặc giao diện báo lỗi
   if (!char) {
