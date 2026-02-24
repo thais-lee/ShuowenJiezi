@@ -1,0 +1,58 @@
+name: Deploy to Azdigi via FTP
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install & Build
+        run: |
+          npm install
+          npm run build
+
+      # Sử dụng Action chuyên dụng cho FTP (Cổng 21)
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          # Thư mục chứa code standalone sau khi build
+          local-dir: ./.next/standalone/
+          # Thư mục đích trên Azdigi (phải khớp với Application Root trong Node.js App)
+          server-dir: home/phap_duye/tv.hanhoc.com/
+          # Chế độ Passive là bắt buộc cho hầu hết các Hosting
+          protocol: ftp
+
+      # Đẩy thư mục static (CSS/JS)
+      - name: Deploy Static
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: ./.next/static/
+          server-dir: home/phap_duye/tv.hanhoc.com/.next/static/
+
+      # Đẩy thư mục public (Ảnh)
+      - name: Deploy Public
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: ./public/
+          server-dir: home/phap_duye/tv.hanhoc.com/public/
